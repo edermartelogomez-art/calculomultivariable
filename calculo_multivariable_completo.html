@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cálculo multivariable — Matemáticas I</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff;--bg2:#F8FAFC;--bg3:#F1F5F9;--text:#0F172A;--muted:#64748B;--border:#E2E8F0;--border2:#CBD5E1;
+  --blue:#1D4ED8;--blue-bg:#EFF6FF;--blue-b:#BFDBFE;--blue-d:#1E3A8A;
+  --green:#15803D;--green-bg:#F0FDF4;--green-b:#BBF7D0;--green-d:#14532D;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-b:#FECACA;--red-d:#7F1D1D;
+  --yellow:#B45309;--yellow-bg:#FFFBEB;--yellow-b:#FDE68A;
+  --purple:#6D28D9;--purple-bg:#F5F3FF;--purple-b:#DDD6FE;
+  --mono:'Courier New',monospace;--sans:'Segoe UI',system-ui,sans-serif;
+  --r:10px;--r2:14px;
+}
+body{font-family:var(--sans);background:var(--bg3);color:var(--text);min-height:100vh;padding:0 0 4rem}
+.topbar{background:var(--bg);border-bottom:1px solid var(--border);padding:.65rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-left h1{font-size:13px;font-weight:600;color:var(--text)}
+.topbar-left p{font-size:11px;color:var(--muted);margin-top:2px}
+.topbar-right{text-align:right}
+.topbar-right p{font-size:11px;color:var(--muted)}
+.topbar-right span{font-size:12px;font-weight:600;color:var(--blue)}
+.pbar{height:3px;background:var(--blue-bg)}
+.pfill{height:100%;background:var(--blue);transition:width .4s;width:11%}
+.nav-pills{display:flex;gap:4px;padding:.85rem 1.5rem .4rem;flex-wrap:wrap;max-width:920px;margin:0 auto}
+.pill{font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all .15s}
+.pill:hover{background:var(--bg2)}
+.pill.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.pill.done{background:var(--green-bg);border-color:var(--green-b);color:var(--green)}
+.sec{display:none;max-width:920px;margin:0 auto;padding:0 1.5rem 2.5rem;animation:fi .18s ease}
+.sec.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.stag{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;padding-top:1.25rem}
+.stitle{font-size:22px;font-weight:700;margin-bottom:.25rem;color:var(--text)}
+.sdesc{font-size:13px;color:var(--muted);margin-bottom:1.1rem;padding-bottom:1rem;border-bottom:1px solid var(--border);line-height:1.6}
+.box{border-radius:var(--r2);padding:.95rem 1.1rem;border:1px solid;margin-bottom:.65rem}
+.bl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.45rem}
+.box p,.box li{font-size:13px;line-height:1.75;color:var(--text)}
+.box ul,.box ol{padding-left:1.3rem}
+.box li{margin-bottom:.25rem}
+.bi{background:var(--blue-bg);border-color:var(--blue-b)}.bi .bl{color:var(--blue)}
+.bk{background:var(--bg2);border-color:var(--border)}.bk .bl{color:var(--muted)}
+.bw{background:var(--yellow-bg);border-color:var(--yellow-b)}.bw .bl{color:var(--yellow)}
+.be{background:var(--red-bg);border-color:var(--red-b)}.be .bl{color:var(--red)}
+.bs{background:var(--green-bg);border-color:var(--green-b)}.bs .bl{color:var(--green)}
+.bp{background:var(--purple-bg);border-color:var(--purple-b)}.bp .bl{color:var(--purple)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.math{font-family:var(--mono);font-size:13px;color:var(--blue-d);background:var(--bg2);padding:.6rem .95rem;border-radius:var(--r);border:1px solid var(--border);margin:.4rem 0;display:block;line-height:2}
+.mi{font-family:var(--mono);font-size:13px;color:var(--blue-d)}
+.app-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:1rem;margin-bottom:.65rem}
+.app-tag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:.3rem}
+.app-title{font-size:14px;font-weight:600;margin-bottom:.35rem;color:var(--text)}
+.app-body{font-size:13px;color:var(--muted);line-height:1.65}
+.eg-box{background:var(--bg2);padding:.75rem .95rem;margin:.45rem 0;font-size:13px;border-left:3px solid var(--blue-b);border-radius:0 var(--r) var(--r) 0;line-height:1.85;color:var(--text)}
+.step-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:.85rem 1rem;margin-bottom:.45rem}
+.sn{width:24px;height:24px;border-radius:50%;background:var(--blue-bg);color:var(--blue);font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-right:.45rem;vertical-align:middle}
+.nota{margin-top:.6rem;background:var(--bg);border:1px solid var(--blue-b);border-radius:var(--r);padding:.65rem .85rem;font-size:12px;color:var(--blue-d);line-height:1.7}
+.rvl{font-family:var(--sans);font-size:12px;font-weight:600;padding:5px 12px;border-radius:var(--r);border:1px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);transition:all .15s;margin-top:.5rem;display:inline-block}
+.rvl:hover{background:var(--bg2);color:var(--text)}
+.btn{font-family:var(--sans);font-size:13px;font-weight:600;padding:7px 16px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--text);transition:all .15s}
+.btn:hover{background:var(--bg2)}
+.btn-p{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-p:hover{background:var(--blue-d)}
+.btn-g{color:var(--muted);border-color:transparent;background:transparent}
+.btn-g:hover{background:var(--bg2);border-color:var(--border);color:var(--text)}
+.btn-sm{font-size:12px;padding:5px 11px}
+.nav-btns{display:flex;justify-content:space-between;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border)}
+.qopt{width:100%;display:flex;align-items:flex-start;gap:.6rem;padding:.65rem .85rem;border-radius:var(--r);border:1px solid var(--border);cursor:pointer;transition:all .15s;background:var(--bg);font-size:13px;color:var(--text);text-align:left;margin-bottom:.35rem;font-family:var(--sans)}
+.qopt:hover{background:var(--bg2);border-color:var(--border2)}
+.qopt.sel{border-color:var(--blue);background:var(--blue-bg);color:var(--blue-d)}
+.qopt.ok{border-color:var(--green);background:var(--green-bg);color:var(--green-d);pointer-events:none}
+.qopt.bad{border-color:var(--red);background:var(--red-bg);color:var(--red-d);pointer-events:none}
+.qopt.rok{border-color:var(--green);background:var(--green-bg);color:var(--green-d);pointer-events:none}
+.qltr{width:20px;height:20px;border-radius:50%;background:var(--bg3);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.qfb{font-size:12px;margin-top:.5rem;padding:.6rem .85rem;border-radius:var(--r);display:none;line-height:1.6}
+.qfb.show{display:block}
+.qfb.ok{background:var(--green-bg);color:var(--green-d);border:1px solid var(--green-b)}
+.qfb.bad{background:var(--red-bg);color:var(--red-d);border:1px solid var(--red-b)}
+.score-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:2.5rem;text-align:center;margin-top:1rem;display:none}
+.score-card.show{display:block}
+.score-num{font-size:52px;font-weight:700;color:var(--blue)}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1rem}
+.stat{background:var(--bg2);border-radius:var(--r);padding:.65rem;text-align:center}
+.stat-n{font-size:22px;font-weight:700;color:var(--blue)}
+.stat-l{font-size:11px;color:var(--muted);margin-top:2px}
+hr{border:none;border-top:1px solid var(--border);margin:1rem 0}
+.parcial-header{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.1rem;margin-bottom:1rem;text-align:center}
+.parcial-titulo{font-size:16px;font-weight:700;color:var(--text);margin-bottom:.2rem}
+.parcial-sub{font-size:12px;color:var(--muted)}
+.pregunta{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:1rem;overflow:hidden}
+.preg-head{padding:.85rem 1rem;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;gap:.75rem}
+.preg-num{min-width:32px;height:32px;border-radius:50%;background:var(--blue-bg);color:var(--blue);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.preg-titulo{font-size:13px;font-weight:600;color:var(--text)}
+.preg-pts{font-size:11px;color:var(--muted);margin-left:auto}
+.preg-body{padding:.85rem 1rem}
+.preg-enun{font-size:13px;color:var(--text);line-height:1.75;margin-bottom:.65rem}
+.parte{font-size:13px;color:var(--text);line-height:1.65;padding:.5rem .75rem;background:var(--bg2);border-radius:var(--r);border-left:3px solid var(--blue-b);margin-bottom:.4rem}
+.sol-btn{font-family:var(--sans);font-size:12px;font-weight:600;padding:5px 13px;border-radius:var(--r);border:1px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);transition:all .15s;margin-top:.5rem}
+.sol-btn:hover{background:var(--bg2)}
+.sol-body{display:none;margin-top:.75rem;border-top:1px solid var(--border);padding-top:.75rem}
+.sol-body.show{display:block}
+.sol-tag{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem}
+.sol-parte{margin-bottom:.65rem}
+.sol-parte-label{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:.25rem;text-transform:uppercase;letter-spacing:.06em}
+@media(max-width:640px){.g2{grid-template-columns:1fr}.nav-pills,.sec{padding-left:1rem;padding-right:1rem}.topbar-right{display:none}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <h1>Cálculo multivariable</h1>
+    <p>Matemáticas I &nbsp;·&nbsp; Ingeniería de Sistemas</p>
+  </div>
+  <div class="topbar-right">
+    <p>Docente</p>
+    <span>Eder Santiago Martelo Gomez</span>
+  </div>
+</div>
+<div class="pbar"><div class="pfill" id="prog"></div></div>
+<div class="nav-pills" id="nav"></div>
+<div id="secs"></div>
+
+<script>
+const SECS=[
+  {id:'s0',label:'1. Derivadas parciales'},
+  {id:'s1',label:'2. Orden superior'},
+  {id:'s2',label:'3. Gradiente'},
+  {id:'s3',label:'4. Plano tangente'},
+  {id:'s4',label:'5. Aprox. lineales'},
+  {id:'s5',label:'6. Lagrange'},
+  {id:'s6',label:'7. Actividades'},
+  {id:'s7',label:'8. Quiz'},
+  {id:'s8',label:'9. Simulacro'},
+];
+let cur=0;
+const nav=document.getElementById('nav');
+const secsEl=document.getElementById('secs');
+SECS.forEach((s,i)=>{
+  const p=document.createElement('button');
+  p.className='pill'+(i===0?' on':'');p.textContent=s.label;p.onclick=()=>goSec(i);nav.appendChild(p);
+  const d=document.createElement('div');
+  d.id=s.id;d.className='sec'+(i===0?' on':'');
+  d.innerHTML=`<div id="${s.id}-body"></div>`;
+  secsEl.appendChild(d);
+});
+function goSec(n){
+  document.getElementById(SECS[cur].id).classList.remove('on');
+  nav.children[cur].classList.remove('on');
+  cur=n;
+  document.getElementById(SECS[cur].id).classList.add('on');
+  nav.children[cur].classList.add('on');
+  document.getElementById('prog').style.width=((cur+1)/SECS.length*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function nb(n){
+  return `<div class="nav-btns">${n>0?`<button class="btn btn-g" onclick="goSec(${n-1})">← ${SECS[n-1].label}</button>`:'<span></span>'}<button class="btn btn-p" onclick="goSec(${Math.min(n+1,SECS.length-1)})">${n+1<SECS.length?'Siguiente: '+SECS[n+1].label+' →':'Completado'}</button></div>`;
+}
+
+/* ── S0: DERIVADAS PARCIALES ── */
+document.getElementById('s0-body').innerHTML=`
+<div class="stag">Sección 1</div><div class="stitle">Derivadas parciales</div>
+<div class="sdesc">La tasa de cambio de una función cuando solo varía una variable. Base de todo lo que viene en el curso.</div>
+<div class="app-card"><div class="app-tag">Contexto — Ingeniería de sistemas</div><div class="app-title">Rendimiento de un servidor</div>
+<div class="app-body">El tiempo de respuesta de un servidor depende del número de peticiones n y de los núcleos p disponibles: <span class="mi">T(n,p) = n²/(100p)</span> ms. El ingeniero quiere saber: si aumenta solo el tráfico, ¿cuánto sube el tiempo? ¿Y si agrega núcleos? Necesita las derivadas parciales.</div></div>
+<div class="box bi"><div class="bl">Definición</div>
+<p><strong>∂f/∂x:</strong> tasa de cambio de f variando solo la variable x, con la variable y constante.<br><strong>∂f/∂y:</strong> tasa de cambio variando solo la variable y, con la variable x constante.</p></div>
+<div class="box bk"><div class="bl">Regla práctica</div>
+<p>Para <strong>∂f/∂x</strong>: trata la variable y como un número fijo y deriva respecto a la variable x con las reglas habituales.<br>Para <strong>∂f/∂y</strong>: trata la variable x como un número fijo y deriva respecto a la variable y.</p></div>
+<div class="eg-box"><strong>Ejemplo — servidor:</strong> T(n,p) = n²/(100p)<br><br>
+∂T/∂n = 2n/(100p) &nbsp;&nbsp;(la variable p es constante)<br>
+∂T/∂p = −n²/(100p²) &nbsp;&nbsp;(la variable n es constante)<br><br>
+En (100, 4): ∂T/∂n = 0.5 ms/petición → cada petición extra suma 0.5 ms<br>
+∂T/∂p = −6.25 ms/núcleo → cada núcleo adicional reduce 6.25 ms</div>
+<div class="box bw"><div class="bl">Interpretación física</div>
+<p>Cada derivada parcial responde: "¿cuánto cambia la salida si muevo solo esta variable?" — exactamente lo que un ingeniero necesita para saber qué parámetro controla más el sistema.</p></div>
+<button class="rvl" onclick="this.nextElementSibling.style.display='block';this.style.display='none'">Ver más ejemplos ↓</button>
+<div style="display:none">
+<div class="eg-box"><strong>f(x,y) = x³y² + sen(xy)</strong><br>∂f/∂x = 3x²y² + ycos(xy) &nbsp;&nbsp;(la variable y es constante)<br>∂f/∂y = 2x³y + xcos(xy) &nbsp;&nbsp;(la variable x es constante)</div>
+<div class="eg-box"><strong>g(x,y) = ln(x + y²)</strong><br>∂g/∂x = 1/(x+y²) &nbsp;&nbsp; ∂g/∂y = 2y/(x+y²)</div>
+</div>
+<div class="app-card" style="margin-top:.65rem"><div class="app-tag">Aplicaciones en ingeniería de sistemas</div><div class="app-title">¿Dónde aparece esto?</div>
+<div class="app-body"><ul style="padding-left:1.2rem;font-size:13px;line-height:1.9">
+<li><strong>Redes neuronales:</strong> el gradiente de la función de pérdida respecto a cada peso es una derivada parcial</li>
+<li><strong>Bases de datos:</strong> sensibilidad del tiempo de consulta respecto a índices y tamaño de tabla</li>
+<li><strong>Redes:</strong> cómo cambia la latencia al variar ancho de banda o número de usuarios</li>
+<li><strong>Sistemas de control:</strong> sensibilidad de la salida respecto a cada parámetro de entrada</li>
+</ul></div></div>
+${nb(0)}`;
+
+/* ── S1: ORDEN SUPERIOR ── */
+document.getElementById('s1-body').innerHTML=`
+<div class="stag">Sección 2</div><div class="stitle">Derivadas de orden superior</div>
+<div class="sdesc">¿Qué tan rápido cambia ese cambio? Las derivadas de segundo orden describen la curvatura de la superficie y permiten clasificar puntos críticos.</div>
+<div class="box bi"><div class="bl">Las cuatro derivadas de segundo orden</div>
+<span class="math">fₓₓ = ∂²f/∂x² → derivo fₓ otra vez respecto a la variable x
+f_yy = ∂²f/∂y² → derivo f_y otra vez respecto a la variable y
+f_xy = ∂²f/∂y∂x → derivo fₓ respecto a la variable y
+f_yx = ∂²f/∂x∂y → derivo f_y respecto a la variable x</span>
+<p style="font-size:12px;color:var(--muted);margin-top:.4rem"><strong>Teorema de Clairaut:</strong> si f es suficientemente suave, entonces f_xy = f_yx. Siempre verifica esto — es una forma de detectar errores.</p></div>
+<div class="eg-box"><strong>f(x,y) = x³y² + 4x²y</strong><br><br>
+fₓ = 3x²y² + 8xy &nbsp;&nbsp; f_y = 2x³y + 4x²<br>
+fₓₓ = 6xy² + 8y &nbsp;&nbsp; f_yy = 2x³<br>
+f_xy = f_yx = 6x²y + 8x &nbsp;&nbsp;✓ Clairaut</div>
+<div class="box bk"><div class="bl">Criterio de la segunda derivada — clasificar puntos críticos</div>
+<span class="math">D = fₓₓ · f_yy − (f_xy)²</span>
+<p style="font-size:13px;margin-top:.4rem">D > 0 y fₓₓ > 0 → <strong>mínimo local</strong><br>D > 0 y fₓₓ < 0 → <strong>máximo local</strong><br>D < 0 → <strong>punto silla</strong><br>D = 0 → no concluyente</p></div>
+<div class="box be"><div class="bl">Error frecuente</div>
+<p>Confundir d²f/dx² (segunda derivada total, función de una variable) con ∂²f/∂x² (segunda derivada parcial). En la parcial las otras variables siguen siendo constantes.</p></div>
+<div class="app-card"><div class="app-tag">Aplicación — ML</div><div class="app-title">Puntos silla en entrenamiento de redes</div>
+<div class="app-body">La función de pérdida L(w₁,w₂) de una red neuronal puede tener puntos silla — puntos donde el gradiente es cero pero no es mínimo ni máximo. El criterio D los detecta. Los optimizadores modernos están diseñados para escapar de puntos silla, que son más comunes que los máximos locales en redes profundas.</div></div>
+${nb(1)}`;
+
+/* ── S2: GRADIENTE ── */
+document.getElementById('s2-body').innerHTML=`
+<div class="stag">Sección 3</div><div class="stitle">Vector gradiente</div>
+<div class="sdesc">El gradiente reúne todas las derivadas parciales en un vector. Apunta en la dirección de mayor crecimiento — y es exactamente el algoritmo que entrena cada red neuronal que existe.</div>
+<div class="app-card"><div class="app-tag">Contexto — Machine learning</div><div class="app-title">Descenso por gradiente</div>
+<div class="app-body">Entrenar una red neuronal es minimizar una función de error E(w₁, w₂, ..., wₙ). El algoritmo <strong>descenso por gradiente</strong> actualiza los pesos moviéndose en la dirección opuesta al gradiente — la dirección de mayor descenso. Esto es ∇E aplicado millones de veces por segundo en GPUs. ChatGPT, Gemini, y todos los modelos de IA se entrenaron así.</div></div>
+<div class="box bi"><div class="bl">Definición del gradiente</div>
+<p>El gradiente de f(x,y) es el vector formado por sus derivadas parciales:</p>
+<span class="math">∇f(x,y) = (∂f/∂x, ∂f/∂y) = (fₓ, f_y)</span>
+<p style="font-size:12px;color:var(--muted);margin-top:.4rem">Se lee "nabla f". En tres variables: ∇f(x,y,z) = (fₓ, f_y, f_z). En n variables: un vector de n componentes.</p></div>
+<div class="g2">
+<div class="box bs" style="margin-bottom:0"><div class="bl">Propiedades del gradiente</div>
+<ul><li>Apunta en la dirección de <strong>mayor crecimiento</strong> de f</li><li>|∇f| es la tasa máxima de cambio</li><li>∇f es perpendicular a las curvas de nivel de f</li><li>Si ∇f = 0 en un punto → punto crítico</li></ul></div>
+<div class="box bw" style="margin-bottom:0"><div class="bl">Descenso por gradiente</div>
+<p>Para minimizar f, el algoritmo actualiza:</p>
+<span class="math" style="font-size:12px">w_nuevo = w_viejo − α · ∇f</span>
+<p style="font-size:12px;margin-top:.4rem">α es la tasa de aprendizaje. El signo negativo porque queremos descender — movernos en la dirección contraria al gradiente.</p></div>
+</div>
+<hr>
+<p style="font-size:14px;font-weight:600;margin-bottom:.65rem">Derivada direccional</p>
+<div class="box bk"><div class="bl">Cambio en cualquier dirección</div>
+<p>La tasa de cambio de f en la dirección del vector unitario <strong>u</strong> = (a, b) es:</p>
+<span class="math">D_u f = ∇f · u = fₓ·a + f_y·b</span>
+<p style="font-size:12px;color:var(--muted);margin-top:.4rem">Cuando u apunta en la dirección de ∇f, D_u f = |∇f| → es el máximo posible. Cuando u es perpendicular a ∇f, D_u f = 0 → nos movemos a lo largo de una curva de nivel.</p></div>
+<div class="eg-box"><strong>Ejemplo — función de error:</strong> E(w₁,w₂) = w₁² + 2w₂²<br><br>
+∇E = (2w₁, 4w₂)<br><br>
+En (1, 0.5): ∇E = (2, 2)<br>
+Dirección de mayor aumento del error: (2,2)/√8 = (1/√2, 1/√2)<br><br>
+<strong>Actualización de pesos (α = 0.1):</strong><br>
+w₁_nuevo = 1 − 0.1·2 = 0.8<br>
+w₂_nuevo = 0.5 − 0.1·2 = 0.3<br>
+E disminuye de E(1,0.5)=1.5 a E(0.8,0.3)≈0.82 ✓</div>
+<div class="nota"><strong>Conexión con lo siguiente:</strong> el plano tangente que veremos a continuación usa el gradiente como su vector normal. Si ya entiendes el gradiente, el plano tangente es una consecuencia geométrica directa.</div>
+${nb(2)}`;
+
+/* ── S3: PLANO TANGENTE ── */
+document.getElementById('s3-body').innerHTML=`
+<div class="stag">Sección 4</div><div class="stitle">Plano tangente</div>
+<div class="sdesc">El plano que mejor aproxima la superficie en un punto dado. Su inclinación está determinada exactamente por el gradiente.</div>
+<div class="app-card"><div class="app-tag">Contexto — sistemas</div><div class="app-title">Linealización local de una función de costo</div>
+<div class="app-body">Un sistema de recomendación tiene una función de costo C(α,β) compleja. Cerca de la configuración actual (α₀,β₀), el plano tangente es la mejor aproximación lineal — permite predecir cómo cambiará el costo ante ajustes pequeños sin recalcular C desde cero.</div></div>
+<div class="box bi"><div class="bl">Ecuación del plano tangente</div>
+<p>En el punto (x₀, y₀) donde z₀ = f(x₀, y₀):</p>
+<span class="math">z = f(x₀,y₀) + fₓ(x₀,y₀)·(x − x₀) + f_y(x₀,y₀)·(y − y₀)</span>
+<p style="font-size:12px;color:var(--muted);margin-top:.4rem">fₓ es la pendiente del plano en la dirección del eje x. f_y es la pendiente en la dirección del eje y. Juntas definen la inclinación total.</p></div>
+<div class="eg-box"><strong>Ejemplo:</strong> f(x,y) = x² + y², punto (1, 2)<br><br>
+f(1,2) = 5. &nbsp; fₓ(1,2) = 2. &nbsp; f_y(1,2) = 4.<br>
+Plano tangente: z = 5 + 2(x−1) + 4(y−2) = 2x + 4y − 5</div>
+<div class="box bk"><div class="bl">Conexión con el gradiente</div>
+<p>El vector normal al plano tangente es <span class="mi">n = (−fₓ, −f_y, 1)</span>. Las primeras dos componentes son exactamente −∇f. El gradiente determina completamente la orientación del plano tangente.</p></div>
+<div class="step-box"><span class="sn">1</span><strong style="font-size:13px">Evalúa f en el punto</strong><p style="font-size:13px;margin-top:.3rem;color:var(--muted)">z₀ = f(x₀,y₀) — el punto de tangencia es (x₀, y₀, z₀).</p></div>
+<div class="step-box"><span class="sn">2</span><strong style="font-size:13px">Calcula las derivadas parciales en ese punto</strong><p style="font-size:13px;margin-top:.3rem;color:var(--muted)">fₓ(x₀,y₀) y f_y(x₀,y₀) — son las pendientes del plano en cada dirección axial.</p></div>
+<div class="step-box"><span class="sn">3</span><strong style="font-size:13px">Sustituye en la fórmula</strong><p style="font-size:13px;margin-top:.3rem;color:var(--muted)">z = z₀ + fₓ(x₀,y₀)(x−x₀) + f_y(x₀,y₀)(y−y₀)</p></div>
+${nb(3)}`;
+
+/* ── S4: APROXIMACIONES LINEALES ── */
+document.getElementById('s4-body').innerHTML=`
+<div class="stag">Sección 5</div><div class="stitle">Aproximaciones lineales</div>
+<div class="sdesc">El plano tangente como herramienta de estimación. Fundamental para propagación de errores, análisis de sensibilidad y sistemas en tiempo real.</div>
+<div class="box bi"><div class="bl">Aproximación lineal — definición</div>
+<p>La aproximación lineal de f cerca del punto (x₀, y₀) es el plano tangente evaluado en ese punto:</p>
+<span class="math">L(x,y) = f(x₀,y₀) + fₓ(x₀,y₀)·(x−x₀) + f_y(x₀,y₀)·(y−y₀)</span>
+<p style="font-size:12px;color:var(--muted);margin-top:.4rem">Válida cuando (x,y) está cerca de (x₀,y₀). Mientras más lejos, mayor el error.</p></div>
+<div class="box bk"><div class="bl">Diferencial total — forma compacta</div>
+<p>El cambio aproximado en f cuando la variable x cambia en dx y la variable y cambia en dy:</p>
+<span class="math">df ≈ Δf ≈ fₓ·dx + f_y·dy</span></div>
+<div class="eg-box"><strong>Latencia de red:</strong> L(b,u) = 10u/b ms (b=ancho de banda Mbps, u=usuarios)<br><br>
+En (b₀,u₀) = (100, 50): L = 5 ms<br>
+∂L/∂b = −10u/b² → en (100,50): −0.05 ms/Mbps<br>
+∂L/∂u = 10/b → en (100,50): 0.1 ms/usuario<br><br>
+Si b sube 5 Mbps y se conectan 10 usuarios más:<br>
+ΔL ≈ (−0.05)(5) + (0.1)(10) = −0.25 + 1 = <strong>+0.75 ms</strong></div>
+<div class="box bs"><div class="bl">Propagación de errores</div>
+<p>Si la variable x se mide con error ±Δx y la variable y con error ±Δy, el error máximo en f es:</p>
+<span class="math">|Δf| ≤ |fₓ|·|Δx| + |f_y|·|Δy|</span>
+<p style="font-size:12px;margin-top:.4rem">Estándar en ingeniería de calidad. Si los parámetros de un sistema tienen tolerancias conocidas, esta fórmula da el error máximo posible en la salida.</p></div>
+${nb(4)}`;
+
+/* ── S5: LAGRANGE ── */
+document.getElementById('s5-body').innerHTML=`
+<div class="stag">Sección 6</div><div class="stitle">Multiplicadores de Lagrange</div>
+<div class="sdesc">Optimizar f(x,y) sujeto a una restricción g(x,y)=c. La condición geométrica clave: los gradientes de f y g son paralelos en el punto óptimo.</div>
+<div class="app-card"><div class="app-tag">Contexto — Ingeniería de sistemas</div><div class="app-title">Maximizar tasa de transferencia con restricción de potencia</div>
+<div class="app-body">Se quiere maximizar la tasa de transferencia T(f,p) = 2f·√p (Mbps), donde f es la frecuencia (GHz) y p es la potencia (W), sujeto a f + p = 10 (presupuesto de energía fijo). No se puede simplemente igualar las derivadas a cero porque f y p están ligadas — si cambias una, la otra cambia. Ahí entra Lagrange.</div></div>
+<div class="box bi"><div class="bl">El método</div>
+<p>Para optimizar f(x,y) sujeto a g(x,y) = c, se resuelve el sistema:</p>
+<span class="math">∇f = λ · ∇g &nbsp;&nbsp;&nbsp; ← los gradientes son paralelos
+g(x,y) = c &nbsp;&nbsp;&nbsp;&nbsp; ← la restricción se cumple</span>
+<p style="font-size:12px;color:var(--muted);margin-top:.4rem">λ (lambda) se llama multiplicador de Lagrange. Tiene una interpretación importante que veremos abajo.</p></div>
+<div class="box bk"><div class="bl">¿Por qué funciona? — intuición geométrica</div>
+<p>En el punto óptimo, las curvas de nivel de f y la curva g=c son tangentes. Dos curvas tangentes tienen el mismo vector normal → sus gradientes son paralelos → ∇f = λ∇g.</p>
+<p style="margin-top:.4rem;font-size:12px;color:var(--muted)">Si los gradientes no fueran paralelos, podríamos movernos a lo largo de g=c y mejorar f — no estaríamos en el óptimo todavía.</p></div>
+<hr>
+<p style="font-size:14px;font-weight:600;margin-bottom:.65rem">Método paso a paso</p>
+<div class="step-box"><span class="sn">1</span><strong style="font-size:13px">Escribir el sistema</strong><p style="font-size:13px;margin-top:.3rem;color:var(--muted)">De ∇f = λ∇g se obtienen 2 ecuaciones + la restricción g=c. Total: 3 ecuaciones, 3 incógnitas (x, y, λ).</p></div>
+<div class="step-box"><span class="sn">2</span><strong style="font-size:13px">Resolver</strong><p style="font-size:13px;margin-top:.3rem;color:var(--muted)">Generalmente se despeja λ de las dos primeras ecuaciones, se igualan y se sustituye en la restricción.</p></div>
+<div class="step-box"><span class="sn">3</span><strong style="font-size:13px">Evaluar f en los candidatos</strong><p style="font-size:13px;margin-top:.3rem;color:var(--muted)">Los puntos que satisfacen el sistema son candidatos. Se comparan los valores de f en cada uno para identificar máximo o mínimo.</p></div>
+<div class="eg-box"><strong>Ejemplo completo — tasa de transferencia:</strong><br>
+Maximizar T(f,p) = 2f√p sujeto a f + p = 10<br><br>
+∇T = (2√p, f/√p) &nbsp;&nbsp; ∇g = (1, 1)<br><br>
+Sistema ∇T = λ∇g:<br>
+2√p = λ &nbsp;&nbsp;→ (1)<br>
+f/√p = λ &nbsp;&nbsp;→ (2)<br>
+f + p = 10 &nbsp;→ (3)<br><br>
+De (1) y (2): 2√p = f/√p → f = 2p<br>
+En (3): 3p = 10 → p = 10/3, f = 20/3<br><br>
+T_max = 2(20/3)·√(10/3) ≈ <strong>24.3 Mbps</strong></div>
+<div class="nota"><strong>Interpretación de λ:</strong> λ = 2√(10/3) ≈ 3.65. Si el presupuesto de energía sube de 10 a 11 W, la tasa máxima aumenta aproximadamente 3.65 Mbps. λ es el "precio sombra" de la restricción — cuánto ganas en el objetivo por relajar la restricción en una unidad.</div>
+${nb(5)}`;
+
+/* ── S6: ACTIVIDADES ── */
+document.getElementById('s6-body').innerHTML=`
+<div class="stag">Sección 7</div><div class="stitle">Actividades para clase</div>
+<div class="sdesc">Casos de ingeniería de sistemas para trabajar en grupos. Cada uno integra varios conceptos del curso.</div>
+<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:1.1rem;margin-bottom:.65rem">
+<p style="font-size:14px;font-weight:600;margin-bottom:.6rem">Grupos de 3 — 20 minutos</p>
+<div class="g2">
+<div style="background:var(--blue-bg);border:1px solid var(--blue-b);border-radius:var(--r);padding:.85rem">
+<div class="bl" style="color:var(--blue)">Grupo A — Optimización de servidor</div>
+<p style="font-size:12px;line-height:1.75">C(n,p) = n²/(50p) + 2p, n=peticiones, p=núcleos.<br>1. Calcula ∇C<br>2. Encuentra los puntos críticos<br>3. Clasifica con el criterio D<br>4. ¿Cuántos núcleos son óptimos para 200 peticiones?</p></div>
+<div style="background:var(--green-bg);border:1px solid var(--green-b);border-radius:var(--r);padding:.85rem">
+<div class="bl" style="color:var(--green)">Grupo B — Gradiente en ML</div>
+<p style="font-size:12px;line-height:1.75">E(w₁,w₂) = (w₁−2)² + 3(w₂−1)²<br>1. Calcula ∇E en (0,0)<br>2. Escribe la actualización con α=0.1<br>3. ¿Hacia dónde converge?<br>4. ¿Cuántos pasos tarda en llegar cerca del mínimo?</p></div>
+<div style="background:var(--yellow-bg);border:1px solid var(--yellow-b);border-radius:var(--r);padding:.85rem">
+<div class="bl" style="color:var(--yellow)">Grupo C — Lagrange en redes</div>
+<p style="font-size:12px;line-height:1.75">Maximizar B(x,y) = 4xy sujeto a 2x + y = 12<br>1. Plantea el sistema de Lagrange<br>2. Resuelve (x, y, λ)<br>3. Calcula B_max<br>4. Interpreta λ: ¿qué significa agregar un canal más?</p></div>
+<div style="background:var(--red-bg);border:1px solid var(--red-b);border-radius:var(--r);padding:.85rem">
+<div class="bl" style="color:var(--red)">Grupo D — Aproximación lineal</div>
+<p style="font-size:12px;line-height:1.75">L(b,u) = 5u²/b ms. Nominal: b=200, u=100.<br>1. Calcula el plano tangente<br>2. Estima L si b=195 y u=105<br>3. Calcula el error respecto al valor real<br>4. ¿Qué variable afecta más la latencia?</p></div>
+</div></div>
+<div class="box bw"><div class="bl">Debate — 10 minutos</div>
+<p>"El descenso por gradiente siempre encuentra el mínimo global de una función de pérdida." ¿Es esto verdad? ¿Qué tiene que ver con los puntos silla y el criterio D?</p></div>
+${nb(6)}`;
+
+/* ── S7: QUIZ ── */
+const qdata=[
+  {q:'¿Qué calcula ∂f/∂x en el punto (x₀,y₀)?',opts:['El gradiente completo de f','La tasa de cambio de f variando solo la variable x, con la variable y constante','La derivada total de f','La dirección de mayor crecimiento'],ans:1,exp:'∂f/∂x mide cómo cambia f cuando solo varía la variable x, tratando la variable y como constante fija.'},
+  {q:'El gradiente ∇f(x,y) apunta en la dirección de:',opts:['Menor crecimiento de f','Máximo crecimiento de f en ese punto','Las curvas de nivel de f','El eje x siempre'],ans:1,exp:'∇f apunta en la dirección de mayor crecimiento de f. Su negativo −∇f apunta en la dirección de mayor descenso — por eso el descenso por gradiente usa el negativo.'},
+  {q:'En el descenso por gradiente, la actualización de pesos es:',opts:['w = w + α·∇E','w = w − α·∇E','w = w · ∇E','w = ∇E/α'],ans:1,exp:'Se mueve en la dirección opuesta al gradiente (−∇E) para descender la función de error. α es la tasa de aprendizaje.'},
+  {q:'El Teorema de Clairaut establece que, bajo condiciones de continuidad:',opts:['fₓₓ = f_yy siempre','f_xy = f_yx','fₓ = f_y','El gradiente es perpendicular al eje x'],ans:1,exp:'Si las derivadas mixtas son continuas, el orden de diferenciación no importa: f_xy = f_yx. Útil para detectar errores.'},
+  {q:'El plano tangente a z=f(x,y) en (x₀,y₀) es:',opts:['z = fₓ·x + f_y·y','z = f(x₀,y₀) + fₓ(x₀,y₀)(x−x₀) + f_y(x₀,y₀)(y−y₀)','z = ∇f·(x,y)','z = fₓₓ(x−x₀)² + f_yy(y−y₀)²'],ans:1,exp:'El plano tangente usa el valor de f en el punto más los incrementos en cada dirección axial ponderados por las derivadas parciales.'},
+  {q:'En Lagrange, ∇f = λ∇g significa geométricamente que:',opts:['f y g tienen el mismo valor en el óptimo','Las curvas de nivel de f y la curva g=c son tangentes — sus gradientes son paralelos','El gradiente de f es cero','f y g son iguales en todo punto'],ans:1,exp:'En el punto óptimo, moverse a lo largo de g=c no puede mejorar f — eso ocurre cuando los gradientes son paralelos.'},
+  {q:'λ en los multiplicadores de Lagrange representa:',opts:['El valor máximo de f','La tasa de cambio del óptimo cuando cambia c en la restricción','El gradiente de g','El error de aproximación'],ans:1,exp:'λ es el precio sombra: cuánto cambia el valor óptimo de f si la restricción se relaja en una unidad.'},
+  {q:'La diferencial total df = fₓdx + f_ydy se usa para:',opts:['Integrar f sobre una región','Estimar el cambio aproximado en f dado cambios pequeños dx en x y dy en y','Calcular el gradiente','Encontrar puntos críticos'],ans:1,exp:'df da el cambio aproximado en f cuando la variable x cambia en dx y la variable y cambia en dy. Base de la propagación de errores.'},
+  {q:'Si D = fₓₓ·f_yy − (f_xy)² < 0 en un punto crítico, ese punto es:',opts:['Mínimo local','Máximo local','Punto silla','No clasificable'],ans:2,exp:'D<0 garantiza un punto silla — la función crece en algunas direcciones y decrece en otras. Problemáticos en entrenamiento de ML.'},
+  {q:'Para maximizar T(f,p)=2f√p con f+p=10 usando Lagrange, el sistema correcto es:',opts:['∂T/∂f=0 y ∂T/∂p=0','2√p=λ, f/√p=λ, f+p=10','∇T=0 y g=10','T=λg'],ans:1,exp:'De ∇T=λ∇g: (2√p, f/√p)=λ(1,1). Más la restricción f+p=10. Son 3 ecuaciones con 3 incógnitas.'},
+];
+let qsels={},qdone=false;
+function buildQuiz(){
+  qsels={};qdone=false;
+  document.getElementById('s7-body').innerHTML=`
+  <div class="stag">Sección 8</div><div class="stitle">Quiz de comprensión</div>
+  <div class="sdesc">10 preguntas que cubren todos los temas del curso. Retroalimentación instantánea en cada respuesta.</div>
+  <div class="stat-row">
+    <div class="stat"><div class="stat-n" id="qok">0</div><div class="stat-l">Correctas</div></div>
+    <div class="stat"><div class="stat-n" id="qbad" style="color:var(--red)">0</div><div class="stat-l">Incorrectas</div></div>
+    <div class="stat"><div class="stat-n" id="qleft">10</div><div class="stat-l">Por responder</div></div>
+  </div>
+  <div>${qdata.map((q,i)=>`
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:.9rem;margin-bottom:.55rem">
+      <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-bottom:.35rem">Pregunta ${i+1}</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:.6rem;line-height:1.45;color:var(--text)">${q.q}</div>
+      ${q.opts.map((o,j)=>`<button class="qopt" onclick="selQ(${i},${j})" data-qi="${i}" data-oi="${j}"><span class="qltr">${'ABCD'[j]}</span>${o}</button>`).join('')}
+      <div class="qfb" id="qfb${i}"></div>
+    </div>`).join('')}</div>
+  <div id="qbtns" style="display:flex;gap:.75rem;justify-content:space-between;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
+    <button class="btn btn-g" onclick="goSec(6)">← Actividades</button>
+    <button class="btn btn-p" onclick="submitQ()">Finalizar y ver puntaje</button>
+  </div>
+  <div class="score-card" id="scard">
+    <div class="score-num" id="snum">0/10</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:.25rem">puntaje final</div>
+    <div style="font-size:15px;font-weight:600;margin-top:.85rem;color:var(--text)" id="smsg"></div>
+    <div style="display:flex;gap:.5rem;justify-content:center;margin-top:1.25rem;flex-wrap:wrap">
+      <button class="btn btn-p" onclick="buildQuiz()">Repetir quiz</button>
+      <button class="btn" onclick="goSec(8)">Ir al simulacro →</button>
+    </div>
+  </div>`;
+}
+function selQ(qi,oi){
+  if(qdone)return;
+  qsels[qi]=oi;
+  document.querySelectorAll(`[data-qi="${qi}"]`).forEach(b=>b.classList.remove('sel'));
+  document.querySelector(`[data-qi="${qi}"][data-oi="${oi}"]`).classList.add('sel');
+  const el=document.getElementById('qleft');if(el)el.textContent=qdata.length-Object.keys(qsels).length;
+}
+function submitQ(){
+  qdone=true;let ok=0;
+  qdata.forEach((q,i)=>{
+    const sel=qsels[i];
+    document.querySelectorAll(`[data-qi="${i}"]`).forEach(b=>{const oi=parseInt(b.dataset.oi);b.classList.remove('sel');b.style.pointerEvents='none';if(oi===q.ans)b.classList.add('ok');else if(sel!==undefined&&oi===sel)b.classList.add('bad');});
+    if(sel===q.ans)ok++;
+    const fb=document.getElementById('qfb'+i);
+    fb.className='qfb show '+(sel===q.ans?'ok':'bad');
+    fb.innerHTML=(sel===q.ans?'<strong>Correcto. </strong>':'<strong>Incorrecto. </strong>')+q.exp;
+  });
+  document.getElementById('qok').textContent=ok;
+  document.getElementById('qbad').textContent=qdata.length-ok;
+  document.getElementById('qleft').textContent=0;
+  document.getElementById('snum').textContent=ok+'/'+qdata.length;
+  const msgs=['Repasa gradiente y Lagrange — son los temas con más peso en el parcial.','Buen avance — revisa los errores antes del parcial.','Muy bien — dominas el curso.','Excelente — listo para el parcial.'];
+  document.getElementById('smsg').textContent=msgs[ok<=3?0:ok<=6?1:ok<=8?2:3];
+  document.getElementById('scard').classList.add('show');
+  document.getElementById('qbtns').style.display='none';
+  nav.children[7].classList.add('done');
+}
+buildQuiz();
+
+/* ── S8: SIMULACRO ── */
+document.getElementById('s8-body').innerHTML=`
+<div class="stag">Sección 9</div><div class="stitle">Simulacro tipo parcial</div>
+<div class="sdesc">5 preguntas como en el parcial real. Resuélvelas en papel antes de ver la solución. Tiempo sugerido: 90 minutos.</div>
+<div class="parcial-header">
+  <div class="parcial-titulo">Parcial — Cálculo Multivariable · Matemáticas I</div>
+  <div class="parcial-sub">Ingeniería de Sistemas &nbsp;·&nbsp; 5 preguntas &nbsp;·&nbsp; 100 puntos &nbsp;·&nbsp; 90 minutos</div>
+  <div style="font-size:12px;color:var(--muted);margin-top:.35rem">Docente: Eder Santiago Martelo Gomez &nbsp;·&nbsp; Muestra todo el procedimiento. Respuestas sin justificación no se califican.</div>
+</div>
+
+<div class="pregunta">
+  <div class="preg-head"><div class="preg-num">1</div><div class="preg-titulo">Derivadas parciales e interpretación</div><div class="preg-pts">20 pts</div></div>
+  <div class="preg-body">
+    <div class="preg-enun">El tiempo de procesamiento de una consulta en una base de datos distribuida está modelado por:<br><br><span class="mi">T(n, s) = n·ln(n) / (2s²)</span> milisegundos<br><br>donde n es el número de registros consultados y s es la velocidad del disco en GB/s.</div>
+    <div class="parte">(a) Calcula ∂T/∂n y ∂T/∂s. Indica en cada paso qué variable tratas como constante.</div>
+    <div class="parte">(b) Evalúa ambas derivadas en n=1000, s=2. Expresa las unidades del resultado.</div>
+    <div class="parte">(c) Interpreta físicamente: ¿qué le dice al ingeniero sobre cómo escalar el sistema?</div>
+    <button class="sol-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'Ocultar solución ↑':'Ver solución ↓'">Ver solución ↓</button>
+    <div class="sol-body">
+      <div class="sol-tag">Solución completa</div>
+      <div class="sol-parte"><div class="sol-parte-label">(a)</div>
+      <span class="math">∂T/∂n: la variable s es constante
+∂T/∂n = (ln(n) + 1) / (2s²)</span>
+      <span class="math">∂T/∂s: la variable n es constante → n·ln(n) es constante
+T = [n·ln(n)/2]·s⁻² → ∂T/∂s = −n·ln(n)/s³</span></div>
+      <div class="sol-parte"><div class="sol-parte-label">(b)</div>
+      <span class="math">∂T/∂n|(1000,2) = (ln1000+1)/8 = 7.908/8 ≈ 0.989 ms/registro
+∂T/∂s|(1000,2) = −1000·ln(1000)/8 ≈ −863.5 ms/(GB/s)</span></div>
+      <div class="sol-parte"><div class="sol-parte-label">(c)</div>
+      <p style="font-size:13px;line-height:1.75">Cada registro extra agrega ~1ms. Cada GB/s adicional de disco reduce 863ms. <strong>El disco es el cuello de botella dominante</strong> — invertir en disco es ~870 veces más efectivo que reducir registros.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="pregunta">
+  <div class="preg-head"><div class="preg-num">2</div><div class="preg-titulo">Gradiente y descenso por gradiente</div><div class="preg-pts">20 pts</div></div>
+  <div class="preg-body">
+    <div class="preg-enun">La función de pérdida de un modelo de regresión con dos parámetros es:<br><br><span class="mi">E(w₁, w₂) = (w₁ + 2w₂ − 4)² + (2w₁ + w₂ − 5)²</span></div>
+    <div class="parte">(a) Calcula el gradiente ∇E = (∂E/∂w₁, ∂E/∂w₂).</div>
+    <div class="parte">(b) Evalúa ∇E en (0, 0). ¿En qué dirección debe moverse el algoritmo?</div>
+    <div class="parte">(c) Aplica una iteración del descenso por gradiente con α = 0.05.</div>
+    <div class="parte">(d) Encuentra el mínimo real de E igualando ∇E = 0.</div>
+    <button class="sol-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'Ocultar solución ↑':'Ver solución ↓'">Ver solución ↓</button>
+    <div class="sol-body">
+      <div class="sol-tag">Solución completa</div>
+      <div class="sol-parte"><div class="sol-parte-label">(a)</div>
+      <span class="math">∂E/∂w₁ = 2(w₁+2w₂−4) + 4(2w₁+w₂−5) = 10w₁ + 8w₂ − 28
+∂E/∂w₂ = 4(w₁+2w₂−4) + 2(2w₁+w₂−5) = 8w₁ + 10w₂ − 26</span></div>
+      <div class="sol-parte"><div class="sol-parte-label">(b)</div>
+      <span class="math">∇E(0,0) = (−28, −26)</span>
+      <p style="font-size:13px;margin-top:.3rem">El gradiente apunta en (−28,−26) — dirección de mayor aumento. El algoritmo se mueve en la dirección opuesta: <strong>(28, 26)</strong>, aumentando w₁ y w₂.</p></div>
+      <div class="sol-parte"><div class="sol-parte-label">(c)</div>
+      <span class="math">w₁ = 0 − 0.05·(−28) = 1.4
+w₂ = 0 − 0.05·(−26) = 1.3</span></div>
+      <div class="sol-parte"><div class="sol-parte-label">(d)</div>
+      <span class="math">10w₁ + 8w₂ = 28
+8w₁ + 10w₂ = 26
+→ w₁ = 2, w₂ = 1 → E(2,1) = 0</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="pregunta">
+  <div class="preg-head"><div class="preg-num">3</div><div class="preg-titulo">Plano tangente y aproximación lineal</div><div class="preg-pts">20 pts</div></div>
+  <div class="preg-body">
+    <div class="preg-enun">La latencia de una red CDN depende del ancho de banda b (Gbps) y el número de nodos n:<br><br><span class="mi">L(b, n) = 200 / (b·√n) &nbsp; ms</span></div>
+    <div class="parte">(a) Halla el plano tangente en b₀=10 Gbps, n₀=25 nodos.</div>
+    <div class="parte">(b) Estima la latencia si b=10.5 Gbps y n=24 nodos usando la aproximación lineal.</div>
+    <div class="parte">(c) Calcula el valor real y el error porcentual.</div>
+    <div class="parte">(d) ¿Qué acción reduce más la latencia: +1 Gbps o +1 nodo? Justifica.</div>
+    <button class="sol-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'Ocultar solución ↑':'Ver solución ↓'">Ver solución ↓</button>
+    <div class="sol-body">
+      <div class="sol-tag">Solución completa</div>
+      <div class="sol-parte"><div class="sol-parte-label">(a)</div>
+      <span class="math">L(10,25) = 200/(10·5) = 4 ms
+∂L/∂b|(10,25) = −200/(b²√n) = −200/500 = −0.4 ms/Gbps
+∂L/∂n|(10,25) = −100/(b·n^(3/2)) = −100/1250 = −0.08 ms/nodo
+Plano: L ≈ 4 − 0.4(b−10) − 0.08(n−25)</span></div>
+      <div class="sol-parte"><div class="sol-parte-label">(b)</div>
+      <span class="math">ΔL ≈ −0.4(0.5) + (−0.08)(−1) = −0.2 + 0.08 = −0.12 ms
+L ≈ 4 − 0.12 = 3.88 ms</span></div>
+      <div class="sol-parte"><div class="sol-parte-label">(c)</div>
+      <span class="math">L(10.5,24) = 200/(10.5·√24) ≈ 3.888 ms
+Error = |3.888−3.88|/3.888 ≈ 0.21%</span></div>
+      <div class="sol-parte"><div class="sol-parte-label">(d)</div>
+      <p style="font-size:13px;line-height:1.75">|∂L/∂b|=0.4 ms/Gbps vs |∂L/∂n|=0.08 ms/nodo. <strong>Aumentar el ancho de banda es 5 veces más efectivo</strong> que agregar un nodo.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="pregunta">
+  <div class="preg-head"><div class="preg-num">4</div><div class="preg-titulo">Multiplicadores de Lagrange</div><div class="preg-pts">20 pts</div></div>
+  <div class="preg-body">
+    <div class="preg-enun">Un sistema en la nube asigna CPU (c, GHz) y memoria (m, GB) a un proceso. El rendimiento es:<br><br><span class="mi">R(c, m) = 4c^(1/2) · m^(1/2)</span><br><br>sujeto a la restricción presupuestaria: <span class="mi">2c + m = 16</span></div>
+    <div class="parte">(a) Plantea el sistema de ecuaciones ∇R = λ∇g.</div>
+    <div class="parte">(b) Resuelve para c*, m* y λ.</div>
+    <div class="parte">(c) Calcula el rendimiento máximo R(c*, m*).</div>
+    <div class="parte">(d) Interpreta λ: si el presupuesto sube de 16 a 17, ¿cuánto mejora el rendimiento?</div>
+    <button class="sol-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'Ocultar solución ↑':'Ver solución ↓'">Ver solución ↓</button>
+    <div class="sol-body">
+      <div class="sol-tag">Solución completa</div>
+      <div class="sol-parte"><div class="sol-parte-label">(a)</div>
+      <span class="math">∇R = (2m^(1/2)/c^(1/2), 2c^(1/2)/m^(1/2)) &nbsp;&nbsp; ∇g = (2, 1)
+Sistema:
+2m^(1/2)/c^(1/2) = 2λ → (1)
+2c^(1/2)/m^(1/2) = λ &nbsp;→ (2)
+2c + m = 16 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ (3)</span></div>
+      <div class="sol-parte"><div class="sol-parte-label">(b)</div>
+      <span class="math">De (1): λ = m^(1/2)/c^(1/2)
+De (2): λ = 2c^(1/2)/m^(1/2)
+Igualando: m = 2c
+En (3): 2c + 2c = 16 → c* = 4, m* = 8
+λ = √8/√4 = √2 ≈ 1.414</span></div>
+      <div class="sol-parte"><div class="sol-parte-label">(c)</div>
+      <span class="math">R(4,8) = 4·√4·√8 = 4·2·2√2 = 16√2 ≈ 22.63</span></div>
+      <div class="sol-parte"><div class="sol-parte-label">(d)</div>
+      <p style="font-size:13px;line-height:1.75">λ ≈ 1.414: cada unidad adicional de presupuesto mejora el rendimiento en ≈ 1.414 unidades. Vale la pena invertir en más recursos.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="pregunta">
+  <div class="preg-head"><div class="preg-num">5</div><div class="preg-titulo">Problema integrador — Optimización de red neuronal</div><div class="preg-pts">20 pts</div></div>
+  <div class="preg-body">
+    <div class="preg-enun">La función de pérdida simplificada de una red neuronal es:<br><br><span class="mi">L(w₁, w₂) = w₁⁴ + w₂⁴ − 4w₁w₂ + 2</span></div>
+    <div class="parte">(a) Calcula ∇L y encuentra todos los puntos críticos donde ∇L = 0.</div>
+    <div class="parte">(b) Calcula D en cada punto crítico y clasifícalo (mínimo, máximo o punto silla).</div>
+    <div class="parte">(c) Escribe el plano tangente a L en el punto (1, 1).</div>
+    <div class="parte">(d) Con la restricción de regularización w₁² + w₂² = 2, usa Lagrange para minimizar L. ¿Cuál es el mínimo restringido?</div>
+    <button class="sol-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'Ocultar solución ↑':'Ver solución ↓'">Ver solución ↓</button>
+    <div class="sol-body">
+      <div class="sol-tag">Solución completa</div>
+      <div class="sol-parte"><div class="sol-parte-label">(a)</div>
+      <span class="math">∂L/∂w₁ = 4w₁³ − 4w₂ = 0 → w₂ = w₁³
+∂L/∂w₂ = 4w₂³ − 4w₁ = 0 → w₁ = w₂³
+Sustituyendo: w₁ = w₁⁹ → w₁(w₁⁸−1) = 0
+Puntos críticos: (0,0), (1,1), (−1,−1)</span></div>
+      <div class="sol-parte"><div class="sol-parte-label">(b)</div>
+      <span class="math">Lw₁w₁=12w₁², Lw₂w₂=12w₂², Lw₁w₂=−4
+D = 144w₁²w₂² − 16
+En (0,0): D=−16 < 0 → punto silla
+En (1,1): D=128 > 0, Lw₁w₁=12>0 → mínimo local, L=0
+En (−1,−1): D=128 > 0, Lw₁w₁=12>0 → mínimo local, L=0</span></div>
+      <div class="sol-parte"><div class="sol-parte-label">(c)</div>
+      <span class="math">L(1,1)=0. ∂L/∂w₁|(1,1)=0. ∂L/∂w₂|(1,1)=0.
+Plano tangente: z = 0</span>
+      <p style="font-size:12px;margin-top:.3rem">Tiene sentido — en un mínimo local la superficie es localmente plana.</p></div>
+      <div class="sol-parte"><div class="sol-parte-label">(d)</div>
+      <span class="math">∇L = λ∇g: (4w₁³−4w₂, 4w₂³−4w₁) = λ(2w₁, 2w₂)
+Por simetría w₁=w₂: 2w₁²=2 → w₁=±1
+L(1,1)=0, L(−1,−1)=0
+w₁=−w₂: L(1,−1)=8
+Mínimo restringido = 0 en (1,1) y (−1,−1)</span></div>
+    </div>
+  </div>
+</div>
+<div class="nav-btns"><button class="btn btn-g" onclick="goSec(7)">← Quiz</button><button class="btn btn-p" onclick="goSec(0)">Volver al inicio</button></div>`;
+</script>
+</body>
+</html>
